@@ -8,8 +8,8 @@
 		<script>
 			var config = {
 				type : Phaser.AUTO,
-				width : 800,
-				height : 600,
+				width : 1600,
+				height : 680,
 				physics : {
 					default : 'arcade',
 					arcade : {
@@ -32,13 +32,14 @@
 			var score = 0;
 			var scoreText;
 			var bombs;
+			var ruleText;
 
 			function preload(){
-				this.load.image("sky", "assets/background.png");
+				this.load.image("sky", "assets/back.png");
 				this.load.image("ground","assets/ground.png");
 				this.load.image("bomb","assets/bomb.png")
 				this.load.image("star","assets/star.png")
-
+				this.load.image("sGround","assets/shortground.png")
 				this.load.spritesheet("dude","assets/dude.png",{
 					frameWidth: 32, frameHeight: 48
 				})
@@ -46,21 +47,27 @@
 
 			function create(){
 			    //Sky
-				this.add.image(700,550, "sky");
+				this.add.image(680,550, "sky");
 
 				//Platforms
 				platforms = this.physics.add.staticGroup();
 
 				//Main floor
-				platforms.create(400,568, 'ground').setScale(2).refreshBody();
-				platforms.create(400,200, 'ground').setScale(0.001).refreshBody();
-				platforms.create(50,250, 'ground');
-				platforms.create(740,100, 'ground');
+				platforms.create(200,665, 'ground');
+				platforms.create(600,665, 'ground');
+				platforms.create(1000,665, 'ground');
+				platforms.create(1400,665, 'ground');
+				platforms.create(400,280, 'ground').setScale(0.001).refreshBody();
+				platforms.create(50,330, 'ground');
+				platforms.create(740,150, 'sGround');
+				platforms.create(500,400, 'sGround');
+				platforms.create(1030,550, 'ground');
+				platforms.create(1150,280, 'sGround');
 
 				//Stars
 				stars = this.physics.add.group({
 					key: "star",
-					repeat: 11,
+					repeat: 20,
 					setXY : {x:12, y:0, stepX:70}
 				});
 
@@ -76,6 +83,8 @@
 				player.setBounce(0.2);
 				player.setCollideWorldBounds(true);
 				player.body.setGravity(0,300);
+				
+				
 
 				//Player animation
 				this.anims.create({
@@ -101,15 +110,15 @@
 				//Colliders
 				this.physics.add.collider(player, platforms);
 				this.physics.add.collider(stars, platforms);
-				this.physics.add.collider(bombs, player);
 				this.physics.add.collider(bombs, platforms);
 				this.physics.add.overlap(player, stars, collectStar, null, this);
-				this.physics.add.overlap(player, bombs, hitBomb, null, this)
+				this.physics.add.collider(player, bombs, hitBomb, null, this);
 				//Player event
 				cursors = this.input.keyboard.createCursorKeys();
 
 				//UI
-				scoreText = this.add.text(16, 16, 'score:0', {fontsize:'32px',fill:'#000'})
+				scoreText = this.add.text(16, 16, 'score:0', {fontsize:'32px',fill:'#000',backgroundColor: '#FFFFFF'})
+				ruleText = this.add.text(16,30, 'Press \'down\' arrow key for hints and rules', {fontsize:'32px',fill:'#000',backgroundColor: '#FFFFFF' })
 			}
 
 			function update(){
@@ -120,6 +129,8 @@
 				}else if(cursors.right.isDown){
 					player.setVelocityX(160);
 					player.anims.play("right", true);
+				}else if(cursors.down.isDown){
+					ruleText.setText("Rules:\nCollectiong each star is 100 points.\nAfter getting all the stars, the stars will reappear and have a bomb involved.\nOnce you touch the bomb the game ends\n\nHints:\nYou can jump on stars!\nUse the bouncing stars!\nThere is a hidden platform!\n\nPress command+r to restart the game.\nPress \'down\' arrow key to hide rules and hints.");
 				}else{
 					player.setVelocityX(0);
 					player.anims.play("turn", true);
@@ -127,8 +138,11 @@
 				//Jump
 				if(cursors.up.isDown && player.body.touching.down){
 					player.setVelocityY(-500);
-				}
-				
+						}
+				//Glide
+				//if(score>=3000&&player.body.touching.down(false){
+					//player.body.setGravity(0,100);
+				//}
 			}
 
 			function collectStar(player, star){
@@ -148,9 +162,10 @@
 					var bomb = bombs.create(x,16,'bomb');
 					bomb.setBounce(1);
 					bomb.setCollideWorldBounds(true);
-					bomb.setVelocityX(Phaser.Math.Between(-200, 200), 20);
+					bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
 					bomb.allowGravity = false;
 				}
+				
 			}
 
 			function hitBomb(player, bomb){
