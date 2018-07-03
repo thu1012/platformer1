@@ -53,9 +53,22 @@
 
 				//Main floor
 				platforms.create(400,568, 'ground').setScale(2).refreshBody();
-				platforms.create(600,400, 'ground');
+				platforms.create(400,200, 'ground').setScale(0.001).refreshBody();
 				platforms.create(50,250, 'ground');
-				platforms.create(750,220, 'ground');
+				platforms.create(740,100, 'ground');
+
+				//Stars
+				stars = this.physics.add.group({
+					key: "star",
+					repeat: 11,
+					setXY : {x:12, y:0, stepX:70}
+				});
+
+				stars.children.iterate (function(child){
+					child.setBounce(Phaser.Math.FloatBetween(0.4,0.8))
+				});
+
+
 
 				//Player
 				player = this.physics.add.sprite(100,500,'dude');
@@ -86,9 +99,13 @@
 
 				//Colliders
 				this.physics.add.collider(player, platforms);
-
+				this.physics.add.collider(stars, platforms);
+				this.physics.add.overlap(player, stars, collectStar, null, this);
 				//Player event
 				cursors = this.input.keyboard.createCursorKeys();
+
+				//UI
+				scoreText = this.add.text(16, 16, 'score:0', {fontsize:'32px',fill:'#000'})
 			}
 
 			function update(){
@@ -108,6 +125,13 @@
 					player.setVelocityY(-500);
 				}
 				
+			}
+
+			function collectStar(player, stars){
+				stars.disableBody(true,true);
+
+				score+=100;
+				scoreText.setText("score: " + score);
 			}
 
 	 	</script>
