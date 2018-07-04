@@ -41,7 +41,7 @@
 				this.load.image("star","assets/star.png")
 				this.load.image("sGround","assets/shortground.png")
 				this.load.spritesheet("dude","assets/dude.png",{
-					frameWidth: 32, frameHeight: 48
+					frameWidth: 32, framHeight: 48
 				})
 			}
 
@@ -59,10 +59,10 @@
 				platforms.create(1400,665, 'ground');
 				platforms.create(400,280, 'ground').setScale(0.001).refreshBody();
 				platforms.create(50,330, 'ground');
-				platforms.create(740,150, 'sGround');
+				platforms.create(740,175, 'sGround');
 				platforms.create(500,400, 'sGround');
 				platforms.create(1030,550, 'ground');
-				platforms.create(1150,280, 'sGround');
+				platforms.create(1105,280, 'sGround');
 
 				//Stars
 				stars = this.physics.add.group({
@@ -130,7 +130,7 @@
 					player.setVelocityX(160);
 					player.anims.play("right", true);
 				}else if(cursors.down.isDown){
-					ruleText.setText("Rules:\nCollectiong each star is 100 points.\nAfter getting all the stars, the stars will reappear and have a bomb involved.\nOnce you touch the bomb the game ends\n\nHints:\nYou can jump on stars!\nUse the bouncing stars!\nThere is a hidden platform!\n\nPress command+r to restart the game.\nPress \'down\' arrow key to hide rules and hints.");
+					ruleText.setText("Rules:\nCollectiong each star is 100 points.\nAfter getting all the stars, the stars will reappear and have a bomb involved.\nOnce you touch the bomb the game ends\nOnce you reach 5000 point, the gravity will be changed to 175. Allowing you to make longer jumps   \n\nHints:\nYou can jump on stars!\nUse the bouncing stars!\nThere is a hidden platform!\n\nPress command+r to restart the game.\n");
 				}else{
 					player.setVelocityX(0);
 					player.anims.play("turn", true);
@@ -140,9 +140,9 @@
 					player.setVelocityY(-500);
 						}
 				//Glide
-				//if(score>=3000&&player.body.touching.down(false){
-					//player.body.setGravity(0,100);
-				//}
+				 if(score>=3000&&player.body.touching.up==false){
+				 	player.body.setGravity(0,175);
+				 }
 			}
 
 			function collectStar(player, star){
